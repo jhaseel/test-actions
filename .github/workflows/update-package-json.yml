@@ -19,17 +19,15 @@ jobs:
 
       - name: Check if the branch is valid
         run: |
-          BRANCH_NAME=$(echo ${{ github.event.pull_request.base.ref }} | cut -d'/' -f2-)
-          CONFIG_COMMAND=$(echo "$BRANCH_CONFIGURATIONS" | jq -r '."$BRANCH_NAME"')
-          echo "The config to use is: $CONFIG_COMMAND"
-          
+          BRANCH_NAME="${{ github.event.pull_request.base.ref }}"
+          echo "The config to use is $BRANCH_NAME"
+          CONFIG_COMMAND=$(echo "$BRANCH_CONFIGURATIONS" | jq -r --arg branch "$BRANCH_NAME" '.[$branch]')
+          echo "The config to use is $CONFIG_COMMAND"
+                    
           if [ -z "$CONFIG_COMMAND" ]; then
             echo "The branch is not valid, exiting..."
             exit 0
           fi
-          
-          echo "The branch is valid: $BRANCH_NAME"
-           
 
       - name: Update Build Configuration
         run: |
