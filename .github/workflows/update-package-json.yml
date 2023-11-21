@@ -28,11 +28,12 @@ jobs:
             exit 0
           fi
           echo "The config to use is $BRANCH_NAME"
+          echo "The comand to use is $CONFIG_COMMAND"
 
       - name: Update Build Configuration
         run: |
           # Replace the line containing "githubActionEnv" with the corresponding configuration
-          echo "The config to use is $CONFIG_COMMAND"
+          echo "The command to use is $CONFIG_COMMAND"
           sed "s/$NGKEY/$CONFIG_COMMAND/" js-storefront/test/package.json
           sed -i "s/$NGKEY/$CONFIG_COMMAND/" js-storefront/test/package.json
 
