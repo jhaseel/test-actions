@@ -38,6 +38,7 @@ jobs:
         run: |
           git config --local user.email "${GITHUB_ACTOR}@github.com"
           git config --local user.name "${GITHUB_ACTOR}"
+          cat js-storefront/test/package.json
           git add js-storefront/test/package.json
           git commit -m "Update build configuration in package.json"
           git push
