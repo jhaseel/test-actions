@@ -32,7 +32,8 @@ jobs:
       - name: Update Build Configuration
         run: |
           # Replace the line containing "githubActionEnv" with the corresponding configuration
-          sed -i "s/\"githubActionEnv\":.*/\"githubActionEnv\": \"$CONFIG_COMMAND\",/" js-storefront/test/package.json
+          sed -i "s/\"githubActionEnv\":.*\"/\"githubActionEnv\": \"$CONFIG_COMMAND\"/" js-storefront/test/package.json
+
 
       - name: Commit and push changes
         run: |
