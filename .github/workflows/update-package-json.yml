@@ -28,7 +28,6 @@ jobs:
             echo "The branch is not valid, exiting..."
             exit 0
           fi
-          
 
       - name: Update Build Configuration
         run: |
