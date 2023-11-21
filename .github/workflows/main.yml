@@ -1,0 +1,42 @@
+name: Update Build Command in package.json
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  update-package-json:
+    runs-on: ubuntu-latest
+
+    env:
+      BRANCH_CONFIGURATIONS: '{"dev-integration":"dev", "sit-integration":"sit", "uat-integration":"uat", "prod-integration":"prod"}'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check if the branch is valid
+        run: |
+          BRANCH_NAME=$(echo ${{ github.event.pull_request.base.ref }} | cut -d'/' -f2-)
+          CONFIG_COMMAND=$(echo "$BRANCH_CONFIGURATIONS" | jq -r .["$BRANCH_NAME"])
+          
+          if [ -z "$CONFIG_COMMAND" ]; then
+            echo "The branch is not valid, exiting..."
+            exit 0
+          fi
+          
+          echo "The branch is valid: $BRANCH_NAME"
+
+      - name: Update Build Configuration
+        run: |
+          # Replace the line containing "githubActionEnv" with the corresponding configuration
+          sed -i "s/\"githubActionEnv\":.*/\"githubActionEnv\": \"$CONFIG_COMMAND\",/" js-storefront/test/package.json
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "${GITHUB_ACTOR}@github.com"
+          git config --local user.name "${GITHUB_ACTOR}"
+          git add js-storefront/test/package.json
+          git commit -m "Update build configuration in package.json"
+          git push
