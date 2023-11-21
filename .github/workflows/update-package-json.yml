@@ -28,7 +28,7 @@ jobs:
           fi
           
           echo "The branch is valid: $BRANCH_NAME"
-          echo "The config to use is" $CONFIG_COMMAND" 
+          echo "The config to use is: $CONFIG_COMMAND" 
 
       - name: Update Build Configuration
         run: |
