@@ -1,4 +1,3 @@
-
 name: Update Build Command in package.json
 
 on:
@@ -12,33 +11,36 @@ jobs:
 
     env:
       BRANCH_CONFIGURATIONS: '{"dev-integration":"dev", "sit-integration":"sit", "uat-integration":"uat", "prod-integration":"prod"}'
-      NGKEY: githubActionEnv
+      BUILD_COMMAND='"build": "ng build --configuration='
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Check if the branch is valid
         run: |
-          export BRANCH_NAME="${{ github.event.pull_request.base.ref }}"
-          CONFIG_COMMAND=$(echo "$BRANCH_CONFIGURATIONS" | jq -r --arg branch "$BRANCH_NAME" '.[$branch]')
-                    
+          BRANCH_NAME=$(echo ${{ github.event.pull_request.base.ref }} | cut -d'/' -f2-)
+          CONFIG_COMMAND=$(echo "$BRANCH_CONFIGURATIONS" | jq -r .["$BRANCH_NAME"])
+          echo "The config is: $CONFIG_COMMAND"
+          
           if [ -z "$CONFIG_COMMAND" ]; then
             echo "The branch is not valid, exiting..."
             exit 0
           fi
-          echo "The config to use is $BRANCH_NAME"
-          echo "CONFIG_COMMAND=$CONFIG_COMMAND" >> $GITHUB_ENV
+          
+          echo "The branch is: $BRANCH_NAME"
 
       - name: Update Build Configuration
         run: |
           # Replace the line containing "githubActionEnv" with the corresponding configuration
-          echo "The command to use is $CONFIG_COMMAND"
-          sed -i "s/$NGKEY/$CONFIG_COMMAND/" js-storefront/test/package.json
+          sed '5c\    '"$BUILD_COMMAND$CONFIG_COMMAND"\" js-storefront/test/package.json
+          sed -i '5c\    '"$BUILD_COMMAND$CONFIG_COMMAND"\" js-storefront/test/package.json
+
 
       - name: Commit and push changes
         run: |
-          git config --local user.name "GitHub Actions Bot"
+          git config --local user.email "${GITHUB_ACTOR}@github.com"
+          git config --local user.name "${GITHUB_ACTOR}"
           git add js-storefront/test/package.json
           git commit -m "Update build configuration in package.json"
           git push
