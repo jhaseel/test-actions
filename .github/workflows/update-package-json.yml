@@ -12,7 +12,7 @@ jobs:
 
     env:
       BRANCH_CONFIGURATIONS: '{"dev-integration":"dev", "sit-integration":"sit", "uat-integration":"uat", "prod-integration":"prod"}'
-      BUILD_COMMAND: "build: \"ng build --configuration="
+      BUILD_COMMAND: '"build": "ng build --configuration='
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
@@ -43,8 +43,8 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git -config user.email "${GITHUB_ACTOR}[bot]@gs.github.com"
-          git -config --local user.name "GitHub Actions Bot"
+          git config user.email "${GITHUB_ACTOR}[bot]@gs.github.com"
+          git config --local user.name "GitHub Actions Bot"
           git add js-storefront/test/package.json
           git commit -m "Update build configuration in package.json"
           git push
