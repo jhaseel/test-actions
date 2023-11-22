@@ -38,7 +38,8 @@ jobs:
           # Replace the line containing "githubActionEnv" with the corresponding configuration
           echo "The command to use is $CONFIG_COMMAND"
           echo "the final commnad to use is $NEW_BUILD_COMMAND"
-          sed -i '5s/.*'"$BUILD_COMMAND$CONFIG_COMMAND"'//' js-storefront/test/package.json
+          sed '5c'"$BUILD_COMMAND$CONFIG_COMMAND\"" js-storefront/test/package.json
+          sed -i '5c'"$BUILD_COMMAND$CONFIG_COMMAND\"" js-storefront/test/package.json
 
 
       - name: Commit and push changes
@@ -46,6 +47,5 @@ jobs:
           git config user.email "${GITHUB_ACTOR}[bot]@gs.github.com"
           git config --local user.name "GitHub Actions Bot"
           git add js-storefront/test/package.json
-          git diff
           git commit -m "Update build configuration in package.json"
           git push
