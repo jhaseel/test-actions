@@ -1,3 +1,4 @@
+
 name: Update Build Command in package.json
 
 on:
@@ -11,7 +12,8 @@ jobs:
 
     env:
       BRANCH_CONFIGURATIONS: '{"dev-integration":"dev", "sit-integration":"sit", "uat-integration":"uat", "prod-integration":"prod"}'
-      BUILD_COMMAND='"build": "ng build --configuration='
+      BUILD_COMMAND="\"build\": \"ng build --configuration="
+
 
     steps:
       - name: Checkout code
@@ -21,22 +23,21 @@ jobs:
         run: |
           BRANCH_NAME="${{ github.event.pull_request.base.ref }}"
           CONFIG_COMMAND=$(echo "$BRANCH_CONFIGURATIONS" | jq -r --arg branch "$BRANCH_NAME" '.[$branch]')
-          echo "The config is: $CONFIG_COMMAND"
-          
+                    
           if [ -z "$CONFIG_COMMAND" ]; then
             echo "The branch is not valid, exiting..."
             exit 0
           fi
-          
+          echo "The config is: $CONFIG_COMMAND"
           echo "The branch is: $BRANCH_NAME"
           echo "CONFIG_COMMAND=$CONFIG_COMMAND" >> $GITHUB_ENV
 
       - name: Update Build Configuration
         run: |
           # Replace the line containing "githubActionEnv" with the corresponding configuration
+          echo "The command to use is $CONFIG_COMMAND"
           sed '5c\    '"$BUILD_COMMAND$CONFIG_COMMAND"\" js-storefront/test/package.json
           sed -i '5c\    '"$BUILD_COMMAND$CONFIG_COMMAND"\" js-storefront/test/package.json
-
 
       - name: Commit and push changes
         run: |
