@@ -12,7 +12,7 @@ jobs:
 
     env:
       BRANCH_CONFIGURATIONS: '{"dev-integration":"dev", "sit-integration":"sit", "uat-integration":"uat", "prod-integration":"prod"}'
-      BUILD_COMMAND="build: \"ng build --configuration="
+      BUILD_COMMAND="build\: \"ng build --configuration=
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
