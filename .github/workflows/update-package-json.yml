@@ -12,7 +12,7 @@ jobs:
 
     env:
       BRANCH_CONFIGURATIONS: '{"dev-integration":"dev", "sit-integration":"sit", "uat-integration":"uat", "prod-integration":"prod"}'
-      BUILD_COMMAND="build\: \"ng build --configuration=
+      BUILD_COMMAND: "build: \"ng build --configuration="
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
@@ -37,15 +37,14 @@ jobs:
         run: |
           # Replace the line containing "githubActionEnv" with the corresponding configuration
           echo "The command to use is $CONFIG_COMMAND"
-          echo "the final commnad to use is $NEW_BUILD_COMMAND"
           sed '5c'"$BUILD_COMMAND$CONFIG_COMMAND\"" js-storefront/test/package.json
           sed -i '5c'"$BUILD_COMMAND$CONFIG_COMMAND\"" js-storefront/test/package.json
 
 
       - name: Commit and push changes
         run: |
-          git config user.email "${GITHUB_ACTOR}[bot]@gs.github.com"
-          git config --local user.name "GitHub Actions Bot"
+          git -config user.email "${GITHUB_ACTOR}[bot]@gs.github.com"
+          git -config --local user.name "GitHub Actions Bot"
           git add js-storefront/test/package.json
           git commit -m "Update build configuration in package.json"
           git push
