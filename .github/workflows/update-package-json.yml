@@ -21,8 +21,8 @@ jobs:
 
       - name: Check if the branch is valid
         run: |
-          BRANCH_NAME="${{ github.event.pull_request.base.ref }}"
-          CONFIG_COMMAND=$(echo "$BRANCH_CONFIGURATIONS" | jq -r --arg branch "$BRANCH_NAME" '.[$branch]')
+          export BRANCH_NAME="${{ github.event.pull_request.base.ref }}"
+          export CONFIG_COMMAND=$(echo "$BRANCH_CONFIGURATIONS" | jq -r --arg branch "$BRANCH_NAME" '.[$branch]')
                     
           if [ -z "$CONFIG_COMMAND" ]; then
             echo "The branch is not valid, exiting..."
