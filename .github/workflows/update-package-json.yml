@@ -13,7 +13,6 @@ jobs:
     env:
       BRANCH_CONFIGURATIONS: '{"dev-integration":"dev", "sit-integration":"sit", "uat-integration":"uat", "prod-integration":"prod"}'
       NGKEY: githubActionEnv
-      CONFIG_COMMAND1: a
 
     steps:
       - name: Checkout code
@@ -30,15 +29,12 @@ jobs:
           fi
           echo "The config to use is $BRANCH_NAME"
           echo "The comand to use is $CONFIG_COMMAND"
-          CONFIG_COMMAND1=$CONFIG_COMMAND
-          echo "Temporal is $CONFIG_COMMAND1"
-          echo "::set-env name=CONFIG_COMMAND::$CONFIG_COMMAND"
+          echo "CONFIG_COMMAND=$CONFIG_COMMAND" >> $GITHUB_ENV
 
       - name: Update Build Configuration
         run: |
           # Replace the line containing "githubActionEnv" with the corresponding configuration
           echo "The command to use is $CONFIG_COMMAND"
-          echo "Temporal is $CONFIG_COMMAND1"
           echo "the branch is $BRANCH_NAME"
           sed "s/$NGKEY/$CONFIG_COMMAND/" js-storefront/test/package.json
           sed -i "s/$NGKEY/$CONFIG_COMMAND/" js-storefront/test/package.json
