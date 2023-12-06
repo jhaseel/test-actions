@@ -28,7 +28,7 @@ jobs:
                     
           if [ "$CONFIG_COMMAND" == "null" ] || [ -z "$CONFIG_COMMAND" ]; then
             echo "The branch is not valid, exiting..."
-            exit 0
+            exit 1
           fi
 
           echo "The branch is: $BRANCH_NAME"
