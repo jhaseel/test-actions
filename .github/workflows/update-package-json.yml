@@ -1,0 +1,51 @@
+
+name: Update Build Command in package.json
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  update-package-json:
+    runs-on: ubuntu-latest
+
+    env:
+      BRANCH_CONFIGURATIONS: '{"dev-integration":"dev", "sit-integration":"sit", "uat-integration":"uat", "prod-integration":"prod"}'
+      BUILD_COMMAND: '"build": "ng build --configuration='
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check if the branch is valid
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.base.ref }}"
+          CONFIG_COMMAND=$(echo "$BRANCH_CONFIGURATIONS" | jq -r --arg branch "$BRANCH_NAME" '.[$branch]')
+          echo "The config is: $CONFIG_COMMAND"
+                    
+          if [ "$CONFIG_COMMAND" == "null" ] || [ -z "$CONFIG_COMMAND" ]; then
+            echo "The branch is not valid, exiting..."
+            exit 1
+          fi
+
+          echo "The branch is: $BRANCH_NAME"
+          echo "CONFIG_COMMAND=$CONFIG_COMMAND" >> $GITHUB_ENV
+
+      - name: Update Build Configuration
+        run: |
+          # Replace the build line with the corresponding configuration
+          echo "The command to use is $CONFIG_COMMAND"
+          sed -i '5c'"$BUILD_COMMAND$CONFIG_COMMAND\"" js-storefront/test/package.json
+
+
+      - name: Commit and push changes
+        run: |
+          git config user.email "${GITHUB_ACTOR}[bot]@gs.github.com"
+          git config --local user.name "GitHub Actions Bot"
+          git diff
+          git add js-storefront/test/package.json
+          git commit -m "Update build configuration in package.json"
+          git push
