@@ -2,7 +2,7 @@
   "name": "test",
   "version": "1.0.0",
   "scripts": {
-    "build": "ng build --configuration=prod"
+"build": "ng build --configuration=prod"
   },
   "private": true,
   "dependencies": {
